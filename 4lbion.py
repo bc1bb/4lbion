@@ -18,7 +18,9 @@ try:
     import requests
     import untangle
 except ImportError:
-    print("Unable to import at least one package, did you install all required Pip packages ?")
+    print(
+        "Unable to import at least one package, did you install all required Pip packages ?"
+    )
     sys.exit(1)
 
 try:
@@ -26,6 +28,7 @@ try:
     from tkinter import messagebox
     from tkinter import filedialog
     import tkinter.ttk
+
     # We import tkinter to create GUI
 except ImportError:
     print("Unable to import Tkinter, is it installed ? Are you running Py3.x ?")
@@ -33,9 +36,26 @@ except ImportError:
 
 
 screenRes = [
-    "3620x2036", "3440x1440", "2560x1440", "1920x1440", "1920x1080", "1680x1050", "1768x992", "1600x1024", "1400x1050",
-    "1600x900", "1440x960", "1440x900", "1280x960", "1280x864", "1366x768", "1280x768", "1280x720", "1152x768",
-    "1152x720", "1024x768"
+    "3620x2036",
+    "3440x1440",
+    "2560x1440",
+    "1920x1440",
+    "1920x1080",
+    "1680x1050",
+    "1768x992",
+    "1600x1024",
+    "1400x1050",
+    "1600x900",
+    "1440x960",
+    "1440x900",
+    "1280x960",
+    "1280x864",
+    "1366x768",
+    "1280x768",
+    "1280x720",
+    "1152x768",
+    "1152x720",
+    "1024x768",
 ]
 
 languages = {
@@ -45,16 +65,24 @@ languages = {
     "Francais": "FR-FR",
     "русский": "RU-RU",
     "Polskie": "PL-PL",
-    "Português (Brasil)": "PT-BR"
+    "Português (Brasil)": "PT-BR",
 }
 
-languagesArray = ["English", "Espanol", "Deutsche", "Français", "русский", "Polskie", "Português (Brasil)"]
+languagesArray = [
+    "English",
+    "Espanol",
+    "Deutsche",
+    "Français",
+    "русский",
+    "Polskie",
+    "Português (Brasil)",
+]
 
 curlHeaders = {
     "Connection": "Keep-Alive",
     "Accept-Encoding": "gzip, deflate",
     "Accept-Language": "en-US,en,*",
-    "User-Agent": "Mozilla/5.0"
+    "User-Agent": "Mozilla/5.0",
 }
 # Exact same headers as the official launcher has
 
@@ -62,8 +90,8 @@ curlHeaders = {
 def getScreenSize():
     tempWindow = Tk()
     tempWindow.update_idletasks()
-    tempWindow.attributes('-fullscreen', True)
-    tempWindow.state('iconic')
+    tempWindow.attributes("-fullscreen", True)
+    tempWindow.state("iconic")
     screenSize = tempWindow.winfo_geometry()
     tempWindow.destroy()
     # we create a fullscreen window that we instantly kill to get the user's screen size
@@ -88,7 +116,7 @@ def initJsonDataFile():
                     "resolution": resolution,
                     "language": "English",
                     "steam": False,
-                    "fullscreen": True
+                    "fullscreen": True,
                 }
                 json.dump(defaultSettings, f)
         except IOError:
@@ -124,7 +152,7 @@ def editJsonData(basePath, resolution, language, steam, fullscreen):
                     "resolution": resolution,
                     "language": language,
                     "steam": steam,
-                    "fullscreen": fullscreen
+                    "fullscreen": fullscreen,
                 }
 
                 json.dump(settings, settingsFile)
@@ -156,7 +184,7 @@ def checkStatus():
     statusAdresses = [
         "http://serverstatus.albiononline.com/",  # default used by official launcher
         "https://status.albiononline.com/status_live.txt",
-        "https://live.albiononline.com/status.txt"
+        "https://live.albiononline.com/status.txt",
     ]
     # this array is totally useless but well it's there lmao
 
@@ -174,9 +202,14 @@ def getLauncherBackground():
     if not os.path.exists("background.gif"):
         regexp = r"background-image: url(.*)"
         try:
-            r = requests.get("https://assets.albiononline.com/launcher/EN", headers=curlHeaders)
+            r = requests.get(
+                "https://assets.albiononline.com/launcher/EN", headers=curlHeaders
+            )
         except requests.exceptions:
-            messagebox.showerror("4lbion - Error", "Unable to access https://assets.albiononline.com/launcher/EN")
+            messagebox.showerror(
+                "4lbion - Error",
+                "Unable to access https://assets.albiononline.com/launcher/EN",
+            )
             sys.exit(1)
 
         html = r.text
@@ -185,7 +218,12 @@ def getLauncherBackground():
             matches = re.finditer(regexp, r.text, re.MULTILINE)
 
             for matchNum, match in enumerate(matches, start=1):
-                url = "htt" + match.group().strip("<div class=\"launcher\" style=\"background-image: url(\"")[:-3]
+                url = (
+                    "htt"
+                    + match.group().strip(
+                        '<div class="launcher" style="background-image: url("'
+                    )[:-3]
+                )
                 # ok do not ask me anything about this line lmfao
                 break
                 # strange way but we get the content of style tag to scrap the image url
@@ -197,7 +235,7 @@ def getLauncherBackground():
                     sys.exit(1)
                 f.write(r.content)
 
-            clip = (ImageSequenceClip(["background.jpeg"], fps=1).resize(width=700))
+            clip = ImageSequenceClip(["background.jpeg"], fps=1).resize(width=700)
             clip.write_gif("background.gif")
             # we resize the background image and transform it in gif so that Tkinter can read it
 
@@ -222,14 +260,25 @@ def connectedPlayers():
         return "Unknown"
 
 
-if not platform.system() == "Windows" and not platform.system() == "Linux" and not platform.system() == "Darwin":
-    warn = messagebox.askokcancel("4lbion - Error", "Your OS (" + platform.system() + ") is not officialy supported by Albion Online nor 4lbion")
+if (
+    not platform.system() == "Windows"
+    and not platform.system() == "Linux"
+    and not platform.system() == "Darwin"
+):
+    warn = messagebox.askokcancel(
+        "4lbion - Error",
+        "Your OS ("
+        + platform.system()
+        + ") is not officialy supported by Albion Online nor 4lbion",
+    )
     if not warn:
         # if user pushes "cancel"
         sys.exit(1)
 
-if not sys.maxsize > 2**32:
-    messagebox.showerror("4lbion - Error", "You need a 64bits processor to run Albion Online")
+if not sys.maxsize > 2 ** 32:
+    messagebox.showerror(
+        "4lbion - Error", "You need a 64bits processor to run Albion Online"
+    )
     sys.exit(1)
 # in the last 2 if statements we test the user's system to know if the computer is supported by Albion
 
@@ -240,9 +289,21 @@ loginServer = "loginserver.live.albion.zone:5055"
 path = basePath + "/game_x64"
 
 servers = {
-    "Live":       ["live.albiononline.com",       "loginserver.live.albion.zone:5055",      basePath + "/game_x64"],
-    "Test":       ["staging.albiononline.com",    "stagingserver.albiononline.com:5055",    basePath + "/staging_x64"],
-    "Playground": ["playground.albiononline.com", "playgroundserver.albiononline.com:5055", basePath + "/playground_x64"]
+    "Live": [
+        "live.albiononline.com",
+        "loginserver.live.albion.zone:5055",
+        basePath + "/game_x64",
+    ],
+    "Test": [
+        "staging.albiononline.com",
+        "stagingserver.albiononline.com:5055",
+        basePath + "/staging_x64",
+    ],
+    "Playground": [
+        "playground.albiononline.com",
+        "playgroundserver.albiononline.com:5055",
+        basePath + "/playground_x64",
+    ]
     # 0: server, 1: loginServer, 2: path
 }
 serversArray = ["Live", "Test", "Playground"]
@@ -279,23 +340,37 @@ class fourlbion:
         self.connectedLabel = Label(master, textvariable=self.connectedVar)
 
         self.gameVersionVar = StringVar()
-        self.gameVersionVar.set("Game version: " + getGameVersion() + " (" + getOS() + ")")
+        self.gameVersionVar.set(
+            "Game version: " + getGameVersion() + " (" + getOS() + ")"
+        )
         self.gameVersionLabel = Label(master, textvariable=self.gameVersionVar)
 
-        self.downloadProgress = tkinter.ttk.Progressbar(root, orient=HORIZONTAL, length=500)
+        self.downloadProgress = tkinter.ttk.Progressbar(
+            root, orient=HORIZONTAL, length=500
+        )
         # to update it: self.downloadProgress['value'] = x (in percentage)
 
         self.serverVar = StringVar()
         self.serverVar.set("Live")
-        self.serverMenu = OptionMenu(root, self.serverVar, *serversArray, command=self.changeServerVars)
+        self.serverMenu = OptionMenu(
+            root, self.serverVar, *serversArray, command=self.changeServerVars
+        )
         self.serverMenu.config(height=1, width=12)
         # entry for server's address
 
-        self.playButton = Button(master, text="Play", command=lambda: threading.Thread(target=self.startGame).start(), height=2, width=14)
+        self.playButton = Button(
+            master,
+            text="Play",
+            command=lambda: threading.Thread(target=self.startGame).start(),
+            height=2,
+            width=14,
+        )
         # play btn
         # put game in another thread so that we can close the launcher while albion is running
 
-        self.settingsButton = Button(master, text="⚙", command=self.settingsWindow, height=2, width=2)
+        self.settingsButton = Button(
+            master, text="⚙", command=self.settingsWindow, height=2, width=2
+        )
         # btn to start the settings window
 
         if backgroundSet:
@@ -323,7 +398,13 @@ class fourlbion:
 
         self.pathVar = StringVar()
         self.pathVar.set(getJsonData("basePath"))
-        self.pathButton = Button(self.settings, command=lambda: self.pathVar.set(filedialog.askdirectory(initialdir=getJsonData("basePath"))), text="Choose Game Path")
+        self.pathButton = Button(
+            self.settings,
+            command=lambda: self.pathVar.set(
+                filedialog.askdirectory(initialdir=getJsonData("basePath"))
+            ),
+            text="Choose Game Path",
+        )
         self.pathButton.config(height=1, width=30)
         # path entry and label
 
@@ -357,9 +438,19 @@ class fourlbion:
         self.fullscreenCheck = Checkbutton(self.settings, variable=self.fullscreenVar)
         # fullscreen checkbutton and label
 
-        self.applyButton = Button(self.settings, text="Apply",
-                                  command=lambda: editJsonData(self.pathVar.get(), self.resVar.get(), self.langVar.get(), self.steamVar.get(), self.fullscreenVar.get()),
-                                  height=1, width=8)
+        self.applyButton = Button(
+            self.settings,
+            text="Apply",
+            command=lambda: editJsonData(
+                self.pathVar.get(),
+                self.resVar.get(),
+                self.langVar.get(),
+                self.steamVar.get(),
+                self.fullscreenVar.get(),
+            ),
+            height=1,
+            width=8,
+        )
 
         self.pathButton.place(x=5, y=5)
 
@@ -385,7 +476,7 @@ class fourlbion:
 
         manifestUrl = "https://" + server + "/autoupdate/manifest.xml"
 
-        self.downloadProgress['value'] = 0
+        self.downloadProgress["value"] = 0
 
         r = requests.get(manifestUrl, headers=curlHeaders)
         manifestXml = r.text
@@ -393,22 +484,30 @@ class fourlbion:
         manifestXml = untangle.parse(manifestXml)
 
         if getOS() == "win32":
-            lastVersion = manifestXml.patchsitemanifest.albiononline.win32.fullinstall["version"]
+            lastVersion = manifestXml.patchsitemanifest.albiononline.win32.fullinstall[
+                "version"
+            ]
         elif getOS() == "macosx":
-            lastVersion = manifestXml.patchsitemanifest.albiononline.macosx.fullinstall["version"]
+            lastVersion = manifestXml.patchsitemanifest.albiononline.macosx.fullinstall[
+                "version"
+            ]
         elif getOS() == "linux":
-            lastVersion = manifestXml.patchsitemanifest.albiononline.linux.fullinstall["version"]
+            lastVersion = manifestXml.patchsitemanifest.albiononline.linux.fullinstall[
+                "version"
+            ]
         else:
-            lastVersion = manifestXml.patchsitemanifest.albiononline.win32.fullinstall["version"]
+            lastVersion = manifestXml.patchsitemanifest.albiononline.win32.fullinstall[
+                "version"
+            ]
 
         localVersion = getGameVersion()
 
         if lastVersion == localVersion:
-            self.downloadProgress['value'] = 100
+            self.downloadProgress["value"] = 100
             self.playButton.config(state="normal", text="Play")
         else:
             self.playButton.config(state="disabled", text="Update Required !")
-            self.downloadProgress['value'] = 0
+            self.downloadProgress["value"] = 0
 
         self.serverMenu.config(state="normal")
 
@@ -421,7 +520,9 @@ class fourlbion:
         loginServer = servers[self.serverVar.get()][1]
         path = servers[self.serverVar.get()][2]
 
-        self.gameVersionVar.set("Game version: " + getGameVersion() + " (" + getOS() + ")")
+        self.gameVersionVar.set(
+            "Game version: " + getGameVersion() + " (" + getOS() + ")"
+        )
 
     def startGame(self):
         width = getJsonData("resolution").split("x")[0]
@@ -429,22 +530,36 @@ class fourlbion:
         # extract width and height from resolution
 
         if getJsonData("fullscreen"):
-            windowMode = "\"-screen-fullscreen 1\" +fullscreen"
+            windowMode = '"-screen-fullscreen 1" +fullscreen'
         else:
             windowMode = "+windowed"
 
         if os.path.exists(path + "/Albion-Online"):
             oldWorkingDir = os.getcwd()
             os.chdir(path)
-            os.system("\"" + path + "/Albion-Online\" " +
-                      windowMode +
-                      " -screen-width " + width + " -screen-height " + height +
-                      " +lang " + languages[getJsonData("language")] +
-                      " +server " + loginServer)
+            os.system(
+                '"'
+                + path
+                + '/Albion-Online" '
+                + windowMode
+                + " -screen-width "
+                + width
+                + " -screen-height "
+                + height
+                + " +lang "
+                + languages[getJsonData("language")]
+                + " +server "
+                + loginServer
+            )
             os.chdir(oldWorkingDir)
             # command is very strange but it's very close to what the official launcher is doing
         else:
-            messagebox.showwarning("4lbion - Error", "Game path is invalid\n(Unable to find " + path + "/Albion-Online on your disk)")
+            messagebox.showwarning(
+                "4lbion - Error",
+                "Game path is invalid\n(Unable to find "
+                + path
+                + "/Albion-Online on your disk)",
+            )
 
 
 try:
