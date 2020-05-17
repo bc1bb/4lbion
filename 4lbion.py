@@ -530,7 +530,12 @@ class fourlbion:
             tocXml = xmltodict.parse(tocXml)
 
             oldPath = os.getcwd()
-            os.chdir(path)
+
+            try:
+                os.chdir(path)
+            except FileNotFoundError:
+                os.makedirs(path)
+                os.chdir(path)
 
             i = 0
             for file in tocXml["toc"]["file"]:
