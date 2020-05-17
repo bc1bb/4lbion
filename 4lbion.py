@@ -289,8 +289,9 @@ class fourlbion:
         self.serverMenu.config(height=1, width=12)
         # entry for server's address
 
-        self.playButton = Button(master, text="Play", command=self.startGame, height=2, width=14)
+        self.playButton = Button(master, text="Play", command=lambda: threading.Thread(target=self.startGame).start(), height=2, width=14)
         # play btn
+        # put game in another thread so that we can close the launcher while albion is running
 
         self.settingsButton = Button(master, text="⚙", command=self.settingsWindow, height=2, width=2)
         # btn to start the settings window
