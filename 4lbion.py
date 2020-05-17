@@ -187,19 +187,21 @@ def getGameVersion():
 
 def checkStatus():
     statusAdresses = [
-        "http://serverstatus.albiononline.com/",  # default used by official launcher
+        "http://serverstatus.albiononline.com/",  # default used by official launcher for server Live
         "https://status.albiononline.com/status_live.txt",
         "https://live.albiononline.com/status.txt",
     ]
     # this array is totally useless but well it's there lmao
 
     r = requests.get("https://" + server + "/status.txt", headers=curlHeaders)
-    content = json.loads(r.text)
+    content = json.loads(r.text[3:][:-2])
 
-    status = content[0]
-    message = content[1]
+    status = content["status"]
 
-    return status, message
+    if status == "online":
+        return True
+    else:
+        return False
 
 
 def getLauncherBackground():
@@ -327,7 +329,7 @@ class fourlbion:
         self.master.title("4lbion " + version)
         self.master.minsize(700, 415)
         self.master.resizable(False, False)
-        # creation of a 700x420 window not resizable
+        # creation of a 700x415 window not resizable
 
         getLauncherBackground()
 
@@ -590,6 +592,9 @@ class fourlbion:
         self.downloadProgress["value"] = 100
         self.playButton.config(state="normal", text="Play")
         self.serverMenu.config(state="normal")
+
+        if not checkStatus():
+            self.playButton.config(state="disabled", text="Server is down")
 
     def changeServerVars(self, event):
         global server, loginServer, path
