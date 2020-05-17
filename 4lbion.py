@@ -12,11 +12,13 @@ try:
     import re
     import platform
     import threading
+    from hashlib import md5
+    from zipfile import ZipFile
 
     # PyPi libs
     from moviepy.editor import *
     import requests
-    import untangle
+    import xmltodict
 except ImportError:
     print(
         "Unable to import at least one package, did you install all required Pip packages ?"
@@ -33,7 +35,6 @@ try:
 except ImportError:
     print("Unable to import Tkinter, is it installed ? Are you running Py3.x ?")
     sys.exit(1)
-
 
 screenRes = [
     "3620x2036",
@@ -84,6 +85,8 @@ curlHeaders = {
     "Accept-Language": "en-US,en,*",
     "User-Agent": "Mozilla/5.0",
 }
+
+
 # Exact same headers as the official launcher has
 
 
@@ -167,6 +170,8 @@ def getOS():
         return "linux"
     if platform.system() == "Darwin":
         return "macosx"
+    else:
+        return "win32"
     # this function returns the OS as SBI's servers names them
 
 
@@ -308,6 +313,7 @@ servers = {
 }
 serversArray = ["Live", "Test", "Playground"]
 
+
 # Non-exhaustive list of officials servers/login servers
 # live.albiononline.com         | loginserver.live.albion.zone:5055         | Main server
 # staging.albiononline.com      | stagingserver.albiononline.com:5055       | Test server
@@ -350,6 +356,9 @@ class fourlbion:
         )
         # to update it: self.downloadProgress['value'] = x (in percentage)
 
+        self.downloadVar = StringVar()
+        self.downloadLabel = Label(master, textvariable=self.downloadVar)
+
         self.serverVar = StringVar()
         self.serverVar.set("Live")
         self.serverMenu = OptionMenu(
@@ -380,21 +389,22 @@ class fourlbion:
         self.gameVersionLabel.pack(anchor="ne")
 
         self.downloadProgress.place(x=5, y=390)
+        self.downloadLabel.place(x=5, y=370)
 
         self.serverMenu.place(x=560, y=345)
         self.playButton.place(x=560, y=375)
         self.settingsButton.place(x=510, y=375)
         # pack everything on the window
 
-        threading.Thread(target=self.updater).start()
+        threading.Thread(target=self.updater, args=(False,)).start()
         # now update the game
 
     def settingsWindow(self):
         self.settings = Toplevel(self.master)
         self.settings.title("4lbion - Settings")
-        self.settings.minsize(280, 200)
+        self.settings.minsize(280, 230)
         self.settings.resizable(False, False)
-        # creation of a 280x200 window not resizable
+        # creation of a 280x230 window not resizable
 
         self.pathVar = StringVar()
         self.pathVar.set(getJsonData("basePath"))
@@ -438,6 +448,13 @@ class fourlbion:
         self.fullscreenCheck = Checkbutton(self.settings, variable=self.fullscreenVar)
         # fullscreen checkbutton and label
 
+        self.updateButton = Button(
+            self.settings,
+            text="Force checking for update",
+            command=lambda: threading.Thread(target=self.updater, args=(True,)).start(),
+        )
+        self.updateButton.config(height=1, width=30)
+
         self.applyButton = Button(
             self.settings,
             text="Apply",
@@ -466,13 +483,16 @@ class fourlbion:
         self.fullscreenLabel.place(x=5, y=130)
         self.fullscreenCheck.place(x=125, y=130)
 
-        self.applyButton.place(x=100, y=170)
+        self.updateButton.place(x=5, y=160)
 
-    def updater(self):
+        self.applyButton.place(x=100, y=200)
+
+    def updater(self, force):
         self.serverMenu.config(state="disabled")
         self.connectedVar.set(connectedPlayers() + " players online")
         self.playButton.config(state="disabled", text="Checking...")
         # here we update and disable everything that could lead to a bug
+        self.downloadProgress["value"] = 0
 
         manifestUrl = "https://" + server + "/autoupdate/manifest.xml"
 
@@ -480,41 +500,97 @@ class fourlbion:
 
         r = requests.get(manifestUrl, headers=curlHeaders)
         manifestXml = r.text
+        manifestXml = xmltodict.parse(manifestXml)
 
-        manifestXml = untangle.parse(manifestXml)
-
-        if getOS() == "win32":
-            lastVersion = manifestXml.patchsitemanifest.albiononline.win32.fullinstall[
-                "version"
-            ]
-        elif getOS() == "macosx":
-            lastVersion = manifestXml.patchsitemanifest.albiononline.macosx.fullinstall[
-                "version"
-            ]
-        elif getOS() == "linux":
-            lastVersion = manifestXml.patchsitemanifest.albiononline.linux.fullinstall[
-                "version"
-            ]
-        else:
-            lastVersion = manifestXml.patchsitemanifest.albiononline.win32.fullinstall[
-                "version"
-            ]
+        # fmt:off
+        lastVersion = manifestXml["patchsitemanifest"]["albiononline"][getOS()]["fullinstall"]["@version"]
+        # fmt:on
 
         localVersion = getGameVersion()
 
-        if lastVersion == localVersion:
-            self.downloadProgress["value"] = 100
-            self.playButton.config(state="normal", text="Play")
-        else:
+        if force or not lastVersion == localVersion:
             self.playButton.config(state="disabled", text="Update Required !")
             self.downloadProgress["value"] = 0
 
+            tocURL = (
+                "https://"
+                + server
+                + "/autoupdate/perfileupdate/"
+                + getOS()
+                + "_"
+                + lastVersion
+                + "/toc_"
+                + getOS()
+                + ".xml"
+            )
+            # example url: https://live.albiononline.com/autoupdate/perfileupdate/linux_1.16.396.166022/toc_linux.xml
+
+            r = requests.get(tocURL, headers=curlHeaders)
+            tocXml = r.text
+            tocXml = xmltodict.parse(tocXml)
+
+            oldPath = os.getcwd()
+            os.chdir(path)
+
+            i = 0
+            for file in tocXml["toc"]["file"]:
+                filePath = file["@path"][:-4]  # -4 because we remove the ".zip"
+                fileMd5 = file["@md5"]
+
+                self.downloadVar.set("Checking " + filePath + "...")
+                percentage = (i / len(tocXml["toc"]["file"])) * 100
+                self.downloadProgress["value"] = percentage
+
+                if (
+                    not os.path.exists(filePath)
+                    or not md5(open(filePath, "rb").read()).hexdigest() == fileMd5
+                ):
+                    self.downloadVar.set("Downloading " + filePath + "...")
+                    fileToDownloadURL = (
+                        "https://"
+                        + server
+                        + "/autoupdate/perfileupdate/"
+                        + getOS()
+                        + "_"
+                        + lastVersion
+                        + "/"
+                        + filePath
+                        + ".zip"
+                    )
+
+                    fileToDownloadZip = requests.get(fileToDownloadURL)
+                    open("temp.zip", "wb").write(fileToDownloadZip.content)
+
+                    with ZipFile("temp.zip", "r") as tempZip:
+                        self.downloadVar.set("Extracting " + filePath + "...")
+                        tempZip.extractall()
+                        try:
+                            os.replace(tempZip.namelist()[0], filePath)
+                        except FileNotFoundError:
+                            pathToCreate = "."
+                            for folder in filePath.split("/")[-1]:
+                                pathToCreate += folder
+                            os.makedirs(pathToCreate)
+
+                    os.remove("temp.zip")
+                i += 1
+
+            print("a")
+
+            self.downloadVar.set("")
+            os.chdir(oldPath)
+
+        self.gameVersionVar.set(
+            "Game version: " + getGameVersion() + " (" + getOS() + ")"
+        )
+        self.downloadProgress["value"] = 100
+        self.playButton.config(state="normal", text="Play")
         self.serverMenu.config(state="normal")
 
     def changeServerVars(self, event):
         global server, loginServer, path
 
-        threading.Thread(target=self.updater).start()
+        threading.Thread(target=self.updater, args=(False,)).start()
 
         server = servers[self.serverVar.get()][0]
         loginServer = servers[self.serverVar.get()][1]
