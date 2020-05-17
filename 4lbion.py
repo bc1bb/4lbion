@@ -9,7 +9,6 @@ try:
     import os
     import sys
     import json
-    from xml.dom import minidom
     import re
     import platform
     import threading
@@ -17,6 +16,7 @@ try:
     # PyPi libs
     from moviepy.editor import *
     import requests
+    import untangle
 except ImportError:
     print("Unable to import at least one package, did you install all required Pip packages ?")
     sys.exit(1)
@@ -381,6 +381,8 @@ class fourlbion:
         self.serverMenu.config(state="disabled")
         self.connectedVar.set(connectedPlayers() + " players online")
         self.playButton.config(state="disabled", text="Checking...")
+        # here we update and disable everything that could lead to a bug
+
         manifestUrl = "https://" + server + "/autoupdate/manifest.xml"
 
         self.downloadProgress['value'] = 0
@@ -388,16 +390,25 @@ class fourlbion:
         r = requests.get(manifestUrl, headers=curlHeaders)
         manifestXml = r.text
 
-        xmldoc = minidom.parseString(manifestXml)
-        itemlist = xmldoc.getElementsByTagName("fullinstall")
+        manifestXml = untangle.parse(manifestXml)
 
-        lastVersion = itemlist[0].attributes['version'].value
+        if getOS() == "win32":
+            lastVersion = manifestXml.patchsitemanifest.albiononline.win32.fullinstall["version"]
+        elif getOS() == "macosx":
+            lastVersion = manifestXml.patchsitemanifest.albiononline.macosx.fullinstall["version"]
+        elif getOS() == "linux":
+            lastVersion = manifestXml.patchsitemanifest.albiononline.linux.fullinstall["version"]
+        else:
+            lastVersion = manifestXml.patchsitemanifest.albiononline.win32.fullinstall["version"]
+
         localVersion = getGameVersion()
 
         if lastVersion == localVersion:
+            self.downloadProgress['value'] = 100
             self.playButton.config(state="normal", text="Play")
         else:
             self.playButton.config(state="disabled", text="Update Required !")
+            self.downloadProgress['value'] = 0
 
         self.serverMenu.config(state="normal")
 
