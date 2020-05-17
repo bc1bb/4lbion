@@ -575,8 +575,6 @@ class fourlbion:
                     os.remove("temp.zip")
                 i += 1
 
-            print("a")
-
             self.downloadVar.set("")
             os.chdir(oldPath)
 
