@@ -567,10 +567,11 @@ class fourlbion:
                         try:
                             os.replace(tempZip.namelist()[0], filePath)
                         except FileNotFoundError:
-                            pathToCreate = "."
-                            for folder in filePath.split("/")[-1]:
-                                pathToCreate += folder
+                            pathToCreate = "./"
+                            for folder in filePath.split("/")[:-1]:
+                                pathToCreate += folder + "/"
                             os.makedirs(pathToCreate)
+                            os.replace(tempZip.namelist()[0], filePath)
 
                     os.remove("temp.zip")
                 i += 1
