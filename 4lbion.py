@@ -204,6 +204,7 @@ def getLauncherBackground():
             os.remove("background.jpeg")
             # we delete the old file because it's useless now
 
+
 def connectedPlayers():
     # we will get this data from Steam so it doesn't reflect the real number of connected players
 
@@ -267,10 +268,11 @@ class fourlbion:
             bg = PhotoImage(file="background.gif")  # Tkinter forces us to use GIF
             bgLabel = Label(self.master, image=bg)
             bgLabel.photo = bg
+            backgroundSet = True
             # here we scrap the background of the official launcher and we use it for our background
         except TclError:
-            messagebox.showerror("4lbion Error", "Unable to load background.gif")
-            sys.exit(1)
+            backgroundSet = False
+            messagebox.showwarning("4lbion - Warning", "Unable to load background.gif")
 
         self.connectedVar = StringVar()
         self.connectedVar.set(connectedPlayers() + " players online")
@@ -296,7 +298,8 @@ class fourlbion:
         self.settingsButton = Button(master, text="⚙", command=self.settingsWindow, height=2, width=2)
         # btn to start the settings window
 
-        bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
+        if backgroundSet:
+            bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
 
         self.connectedLabel.place(relx=0, rely=0, anchor="nw")
         self.gameVersionLabel.pack(anchor="ne")
