@@ -189,12 +189,15 @@ def checkStatus():
     statusAdresses = [
         "http://serverstatus.albiononline.com/",  # default used by official launcher for server Live
         "https://status.albiononline.com/status_live.txt",
-        "https://live.albiononline.com/status.txt",
+        "https://live.albiononline.com/status.txt",  # always says server is up even when it's down
     ]
     # this array is totally useless but well it's there lmao
 
-    r = requests.get("https://" + server + "/status.txt", headers=curlHeaders)
-    content = json.loads(r.text[3:][:-2])
+    r = requests.get(
+        "https://status.albiononline.com/status_" + server.split(".")[0] + ".txt",
+        headers=curlHeaders,
+    )
+    content = json.loads(r.text)
 
     status = content["status"]
 
