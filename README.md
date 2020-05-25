@@ -6,15 +6,22 @@
 
 Reading the source code can lead to several headaches and mental health problems.
 
-**Online player number is scraped from Steam not from Albion it's is not really representative**
+**Online player number is scraped from Steam not from Albion it is not really representative**
 
 This software or the author are not affiliated with Sandbox Interactive.
 
 ## Installation
-TODO
+First, install Python3 and Tkinter
+```
+git clone https://github.com/jusdepatate/4lbion.git
+cd 4lbion
+pip install -r requirements.py
+python3 4lbion.py
+```
 
-## Compilation
-TODO
+## Tested on
+- Manjaro 19 & 20
+- Windows 10
 
 ## Configuration
-Everything happens in `4lbion.json` in the same folder as the executable.
+Everything happens in `4lbion.json` in the working directory.
