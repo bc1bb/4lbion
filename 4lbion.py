@@ -12,6 +12,7 @@ try:
     import re
     import platform
     import threading
+    import subprocess
     from hashlib import md5
     from zipfile import ZipFile
 
@@ -26,9 +27,21 @@ except ImportError:
     sys.exit(1)
 
 try:
-    from tkinter import *
-    from tkinter import messagebox
-    from tkinter import filedialog
+    from tkinter import (
+        Tk,
+        TclError,
+        PhotoImage,
+        Label,
+        Button,
+        Menubutton,
+        OptionMenu,
+        StringVar,
+        BooleanVar,
+        HORIZONTAL,
+        messagebox,
+        filedialog,
+        Toplevel,
+    )
     import tkinter.ttk
 
     # We import tkinter to create GUI
@@ -208,7 +221,7 @@ def checkStatus():
 
 
 def getLauncherBackground():
-    global url
+    url = ""
     if not os.path.exists("background.gif"):
         regexp = r"background-image: url(.*)"
         try:
@@ -285,7 +298,7 @@ if (
         # if user pushes "cancel"
         sys.exit(1)
 
-if not sys.maxsize > 2 ** 32:
+if sys.maxsize < 2 ** 32:
     messagebox.showerror(
         "4lbion - Error", "You need a 64bits processor to run Albion Online"
     )
@@ -625,7 +638,7 @@ class fourlbion:
         if os.path.exists(path + "/Albion-Online"):
             oldWorkingDir = os.getcwd()
             os.chdir(path)
-            os.system(
+            subprocess.call(
                 '"'
                 + path
                 + '/Albion-Online" '
@@ -637,7 +650,8 @@ class fourlbion:
                 + " +lang "
                 + languages[getJsonData("language")]
                 + " +server "
-                + loginServer
+                + loginServer,
+                shell=False,
             )
             os.chdir(oldWorkingDir)
             # command is very strange but it's very close to what the official launcher is doing
