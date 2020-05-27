@@ -94,14 +94,14 @@ languagesArray = [
 ]
 
 curlHeaders = {
+    # Exact same headers as the official launcher has
     "Connection": "Keep-Alive",
     "Accept-Encoding": "gzip, deflate",
     "Accept-Language": "en-US,en,*",
     "User-Agent": "Mozilla/5.0",
 }
 
-
-# Exact same headers as the official launcher has
+launcherPath = os.getcwd()
 
 
 def getScreenSize():
@@ -120,9 +120,9 @@ def getScreenSize():
 
 
 def initJsonDataFile():
-    if not os.path.exists("4lbion.json"):
+    if not os.path.exists(launcherPath + "/4lbion.json"):
         try:
-            with open("4lbion.json", "w") as f:
+            with open(launcherPath + "/4lbion.json", "w") as f:
                 if getScreenSize() in screenRes:
                     resolution = getScreenSize()
                 else:
@@ -141,8 +141,8 @@ def initJsonDataFile():
 
 
 def getJsonData(name):
-    if os.path.exists("4lbion.json"):
-        with open("4lbion.json") as f:
+    if os.path.exists(launcherPath + "/4lbion.json"):
+        with open(launcherPath + "/4lbion.json") as f:
             settings = json.load(f)
 
             if name in settings:
@@ -156,14 +156,14 @@ def getJsonData(name):
 
 
 def editJsonData(basePath, resolution, language, steam, fullscreen):
-    if os.path.exists("4lbion.json"):
+    if os.path.exists(launcherPath + "/4lbion.json"):
         try:
             if not resolution == getJsonData("resolution"):
                 messagebox.showwarning("4lbion - Warning", "Please restart 4lbion")
             elif not basePath == getJsonData("basePath"):
                 messagebox.showwarning("4lbion - Warning", "Please restart 4lbion")
 
-            with open("4lbion.json", "w") as settingsFile:
+            with open(launcherPath + "/4lbion.json", "w") as settingsFile:
                 settings = {
                     "basePath": basePath,
                     "resolution": resolution,
