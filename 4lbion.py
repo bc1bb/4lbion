@@ -17,7 +17,7 @@ try:
     from zipfile import ZipFile
 
     # PyPi libs
-    from moviepy.editor import *
+    from PIL import Image
     import requests
     import xmltodict
 except ImportError:
@@ -259,8 +259,9 @@ def getLauncherBackground():
                     sys.exit(1)
                 f.write(r.content)
 
-            clip = ImageSequenceClip(["background.jpeg"], fps=1).resize(width=700)
-            clip.write_gif("background.gif")
+            img = Image.open('background.jpeg')
+            img.resize(700, 415)
+            img.save('background.gif')
             # we resize the background image and transform it in gif so that Tkinter can read it
 
             os.remove("background.jpeg")
