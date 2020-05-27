@@ -260,7 +260,8 @@ def getLauncherBackground():
                 f.write(r.content)
 
             img = Image.open('background.jpeg')
-            img.resize(700, 415)
+
+            img.thumbnail((700, 415), Image.ANTIALIAS)
             img.save('background.gif')
             # we resize the background image and transform it in gif so that Tkinter can read it
 
