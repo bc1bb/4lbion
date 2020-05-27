@@ -33,6 +33,7 @@ try:
         PhotoImage,
         Label,
         Button,
+        Checkbutton,
         Menubutton,
         OptionMenu,
         StringVar,
