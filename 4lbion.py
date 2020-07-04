@@ -301,11 +301,12 @@ if (
         # if user pushes "cancel"
         sys.exit(1)
 
-if sys.maxsize < 2 ** 32:
-    messagebox.showerror(
-        "4lbion - Error", "You need a 64bits processor to run Albion Online"
-    )
-    sys.exit(1)
+# this way to check 32/64 bits on Windows doesn't work, will update later when I can find another way to do
+#if sys.maxsize < 2 ** 32:
+#    messagebox.showerror(
+#        "4lbion - Error", "You need a 64bits processor to run Albion Online"
+#    )
+#    sys.exit(1)
 # in the last 2 if statements we test the user's system to know if the computer is supported by Albion
 
 basePath = getJsonData("basePath")
