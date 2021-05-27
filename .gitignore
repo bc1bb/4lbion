@@ -1,4 +1,10 @@
 4lbion.json
 # users's config
 
+venv/
+.idea/
+game*/
+staging*/
+playground*/
+
 background.*

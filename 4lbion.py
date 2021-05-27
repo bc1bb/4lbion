@@ -302,7 +302,7 @@ if (
         sys.exit(1)
 
 # this way to check 32/64 bits on Windows doesn't work, will update later when I can find another way to do
-#if sys.maxsize < 2 ** 32:
+# if sys.maxsize < 2 ** 32:
 #    messagebox.showerror(
 #        "4lbion - Error", "You need a 64bits processor to run Albion Online"
 #    )
@@ -635,7 +635,7 @@ class fourlbion:
         # extract width and height from resolution
 
         if getJsonData("fullscreen"):
-            windowMode = '"-screen-fullscreen 1" +fullscreen'
+            windowMode = '-screen-fullscreen 1 +fullscreen'
         else:
             windowMode = "+windowed"
 
@@ -655,7 +655,7 @@ class fourlbion:
                 + languages[getJsonData("language")]
                 + " +server "
                 + loginServer,
-                shell=False,
+                shell=True,
             )
             os.chdir(oldWorkingDir)
             # command is very strange but it's very close to what the official launcher is doing
