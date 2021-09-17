@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # 4lbion - Open Source launcher for Albion Online
-# Jus de Patate_ | ign: jusdepatate | jusdepatate@protonmail.com - 2020
+# Jus de Patate_ | ign: jusdepatate | jusdepatate@protonmail.com - 2021
 
 version = "1.0"
 
@@ -13,6 +13,7 @@ try:
     import platform
     import threading
     import subprocess
+    import stat
     from hashlib import md5
     from zipfile import ZipFile
 
@@ -87,10 +88,10 @@ languagesArray = [
     "English",
     "Espanol",
     "Deutsche",
-    "Français",
-    "русский",
+    "Francais",
+    "Russian",
     "Polskie",
-    "Português (Brasil)",
+    "Portugues (Brasil)",
 ]
 
 curlHeaders = {
@@ -605,6 +606,7 @@ class fourlbion:
 
             self.downloadVar.set("")
             os.chdir(oldPath)
+            os.chmod(path + "/Albion-Online", stat.S_IXUSR) # add execute by owner permission for the binary file
 
         self.gameVersionVar.set(
             "Game version: " + getGameVersion() + " (" + getOS() + ")"

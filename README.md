@@ -19,8 +19,11 @@ pip install -r requirements.py
 python3 4lbion.py
 ```
 
+#### `Albion-Online_Data/resources.assets.resS` takes a while to download/check, why ?
+This file is pretty big (1.8Go at time of writing), so it is normal for it to take a while 
+
 ## Tested on
-- Manjaro 19 & 20
+- Manjaro 19 -> 21
 - Windows 10
 
 ## Configuration
