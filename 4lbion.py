@@ -606,7 +606,9 @@ class fourlbion:
 
             self.downloadVar.set("")
             os.chdir(oldPath)
-            os.chmod(path + "/Albion-Online", stat.S_IXUSR) # add execute by owner permission for the binary file
+            os.chmod(
+                path + "/Albion-Online", stat.S_IXUSR
+            )  # add execute by owner permission for the binary file
 
         self.gameVersionVar.set(
             "Game version: " + getGameVersion() + " (" + getOS() + ")"
@@ -637,7 +639,7 @@ class fourlbion:
         # extract width and height from resolution
 
         if getJsonData("fullscreen"):
-            windowMode = '-screen-fullscreen 1 +fullscreen'
+            windowMode = "-screen-fullscreen 1 +fullscreen"
         else:
             windowMode = "+windowed"
 
