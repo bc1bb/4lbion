@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=true
+Exec=python3 /home/jusdepatate/build/4lbion/4lbion.py
+Name=Albion Online
+GenericName=The Fantasy Sandbox MMORPG
+Comment=Launch Albion Online using 4lbion
+Icon=/home/jusdepatate/build/4lbion/game_x64/Albion-Online_Data/Resources/UnityPlayer.png
+Categories=Games;
