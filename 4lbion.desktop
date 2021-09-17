@@ -1,8 +1,8 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Terminal=true
-Exec=python3 /home/jusdepatate/build/4lbion/4lbion.py
+Terminal=false
+Exec=bash -c "cd /home/jusdepatate/build/4lbion && python3 /home/jusdepatate/build/4lbion/4lbion.py"
 Name=Albion Online
 GenericName=The Fantasy Sandbox MMORPG
 Comment=Launch Albion Online using 4lbion
