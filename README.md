@@ -25,7 +25,12 @@ This file is pretty big (1.8Go at time of writing), so it is normal for it to ta
 
 ## Tested on
 - Manjaro 19 -> 21
-- Windows 10
+- Windows 10 -> 11
+- Debian 11
 
 ## Configuration
 Everything happens in `4lbion.json` in the working directory.
+
+ - Very rare case:
+ 
+You might want to use WSL to test compatibility between Windows and Linux, in this case, make sure you are always executing 4lbion from the same folder and change `basePath` to `.` in `4lbion.json`.

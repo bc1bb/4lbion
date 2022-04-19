@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # 4lbion - Open Source launcher for Albion Online
-# Jus de Patate_ | ign: jusdepatate | jusdepatate@protonmail.com - 2021
+# Jus de Patate_ | ign: jusdepatate | jusdepatate@protonmail.com - 2020 - 2022
 
 version = "1.0"
 
@@ -262,7 +262,7 @@ def getLauncherBackground():
 
             img = Image.open("background.jpeg")
 
-            img.thumbnail((700, 415), Image.ANTIALIAS)
+            img.thumbnail((700, 415), 0)  # 0 = BEST QUALITY
             img.save("background.gif")
             # we resize the background image and transform it in gif so that Tkinter can read it
 
@@ -672,9 +672,10 @@ class fourlbion:
             )
 
 
-try:
-    root = Tk()
-    window = fourlbion(root)
-    root.mainloop()
-except KeyboardInterrupt:
-    sys.exit(0)
+if __name__ == "__main__":
+    try:
+        root = Tk()
+        window = fourlbion(root)
+        root.mainloop()
+    except KeyboardInterrupt:
+        sys.exit(0)
