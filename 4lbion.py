@@ -39,10 +39,11 @@ try:
         OptionMenu,
         StringVar,
         BooleanVar,
-        HORIZONTAL,
         messagebox,
         filedialog,
         Toplevel,
+        Frame,
+        constants,
     )
     import tkinter.ttk
 
@@ -348,10 +349,9 @@ class fourlbion:
     def __init__(self, master):
         self.master = master
         self.master.title("4lbion " + version)
-        self.master.minsize(700, 415)
-        self.master.resizable(False, False)
+        self.master.minsize(640, 415)
         self.master.lift()
-        # creation of a 700x415 window not resizable and put in on the top
+        # creation of a window and put in on the top
 
         getLauncherBackground()
 
@@ -360,39 +360,53 @@ class fourlbion:
             bgLabel = Label(self.master, image=bg)
             bgLabel.photo = bg
             backgroundSet = True
-            # here we scrap the background of the official launcher and we use it for our background
+            # here we scrap the background of the official launcher and use it for our background
         except TclError:
             backgroundSet = False
             messagebox.showwarning("4lbion - Warning", "Unable to load background.gif")
 
+        self.topBar = Frame(self.master)
+
         self.connectedVar = StringVar()
         self.connectedVar.set(connectedPlayers() + " players online")
-        self.connectedLabel = Label(master, textvariable=self.connectedVar)
+        self.connectedLabel = Label(self.topBar, textvariable=self.connectedVar)
 
         self.gameVersionVar = StringVar()
         self.gameVersionVar.set(
             "Game version: " + getGameVersion() + " (" + getOS() + ")"
         )
-        self.gameVersionLabel = Label(master, textvariable=self.gameVersionVar)
+        self.gameVersionLabel = Label(self.topBar, textvariable=self.gameVersionVar)
 
+        self.botFrame = Frame(self.master)
+
+        self.dwFrame = Frame(self.botFrame)
+        self.dwFramel1 = Frame(self.dwFrame)
+        self.downloadVar = StringVar()
+        self.downloadLabel = Label(self.dwFramel1, textvariable=self.downloadVar)
+
+        self.dwFramel2 = Frame(self.dwFrame)
         self.downloadProgress = tkinter.ttk.Progressbar(
-            root, orient=HORIZONTAL, length=500
+            self.dwFramel2, orient=constants.HORIZONTAL, length=500, mode="determinate"
         )
         # to update it: self.downloadProgress['value'] = x (in percentage)
 
-        self.downloadVar = StringVar()
-        self.downloadLabel = Label(master, textvariable=self.downloadVar)
+        self.serverFrame = Frame(self.botFrame)
 
+        self.serverFramel1 = Frame(self.serverFrame)
         self.serverVar = StringVar()
         self.serverVar.set("Live")
         self.serverMenu = OptionMenu(
-            root, self.serverVar, *serversArray, command=self.changeServerVars
+            self.serverFramel1,
+            self.serverVar,
+            *serversArray,
+            command=self.changeServerVars,
         )
-        self.serverMenu.config(height=1, width=12)
+        self.serverMenu.config(height=1, width=15)
         # entry for server's address
 
+        self.serverFramel2 = Frame(self.serverFrame)
         self.playButton = Button(
-            master,
+            self.serverFramel2,
             text="Play",
             command=lambda: threading.Thread(target=self.startGame).start(),
             height=2,
@@ -402,23 +416,34 @@ class fourlbion:
         # put game in a none daemon thread so that we can close the launcher while albion is running
 
         self.settingsButton = Button(
-            master, text="⚙", command=self.settingsWindow, height=2, width=2
+            self.serverFramel2, text="⚙", command=self.settingsWindow, height=2, width=2
         )
         # btn to start the settings window
 
         if backgroundSet:
             bgLabel.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.connectedLabel.place(relx=0, rely=0, anchor="nw")
-        self.gameVersionLabel.pack(anchor="ne")
+        self.topBar.pack(side=constants.TOP, fill=constants.X)
+        self.connectedLabel.pack(side=constants.LEFT)
+        self.gameVersionLabel.pack(side=constants.RIGHT)
+        # pack topBar and children
 
-        self.downloadProgress.place(x=5, y=390)
-        self.downloadLabel.place(x=5, y=370)
+        self.botFrame.pack(side=constants.BOTTOM, fill=constants.X)
 
-        self.serverMenu.place(x=560, y=345)
-        self.playButton.place(x=560, y=375)
-        self.settingsButton.place(x=510, y=375)
-        # place everything on the window
+        self.dwFrame.pack(side=constants.LEFT)
+        self.dwFramel1.pack(side=constants.TOP, fill=constants.X)
+        self.downloadLabel.pack(side=constants.TOP, fill=constants.X)
+        self.dwFramel2.pack(side=constants.BOTTOM, fill=constants.X)
+        self.downloadProgress.pack(side=constants.BOTTOM, ipady=13)
+        # pack dwFrame and children
+
+        self.serverFrame.pack(side=constants.RIGHT)
+        self.serverFramel1.pack(side=constants.TOP)
+        self.serverMenu.pack(side=constants.RIGHT)
+        self.serverFramel2.pack(side=constants.BOTTOM)
+        self.settingsButton.pack(side=constants.LEFT)
+        self.playButton.pack(side=constants.RIGHT, fill=constants.X)
+        # pack serverFrame and children
 
         self.updateThread = threading.Thread(target=self.updater, args=(False,))
         self.updateThread.daemon = True
