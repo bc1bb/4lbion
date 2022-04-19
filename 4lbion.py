@@ -350,7 +350,8 @@ class fourlbion:
         self.master.title("4lbion " + version)
         self.master.minsize(700, 415)
         self.master.resizable(False, False)
-        # creation of a 700x415 window not resizable
+        self.master.lift()
+        # creation of a 700x415 window not resizable and put in on the top
 
         getLauncherBackground()
 
@@ -398,7 +399,7 @@ class fourlbion:
             width=14,
         )
         # play btn
-        # put game in another thread so that we can close the launcher while albion is running
+        # put game in a none daemon thread so that we can close the launcher while albion is running
 
         self.settingsButton = Button(
             master, text="⚙", command=self.settingsWindow, height=2, width=2
@@ -417,9 +418,12 @@ class fourlbion:
         self.serverMenu.place(x=560, y=345)
         self.playButton.place(x=560, y=375)
         self.settingsButton.place(x=510, y=375)
-        # pack everything on the window
+        # place everything on the window
 
-        threading.Thread(target=self.updater, args=(False,)).start()
+        self.updateThread = threading.Thread(target=self.updater, args=(False,))
+        self.updateThread.daemon = True
+        # Doing this so the thread will stop when the launcher stops
+        self.updateThread.start()
         # now update the game
 
     def settingsWindow(self):
@@ -427,6 +431,7 @@ class fourlbion:
         self.settings.title("4lbion - Settings")
         self.settings.minsize(280, 230)
         self.settings.resizable(False, False)
+        self.settings.lift()
         # creation of a 280x230 window not resizable
 
         self.pathVar = StringVar()
@@ -471,10 +476,12 @@ class fourlbion:
         self.fullscreenCheck = Checkbutton(self.settings, variable=self.fullscreenVar)
         # fullscreen checkbutton and label
 
+        self.updateThread = threading.Thread(target=self.updater, args=(True,))
+        self.updateThread.daemon = True
         self.updateButton = Button(
             self.settings,
             text="Force checking for update",
-            command=lambda: threading.Thread(target=self.updater, args=(True,)).start(),
+            command=lambda: self.updateThread.start(),
         )
         self.updateButton.config(height=1, width=30)
 
@@ -623,7 +630,9 @@ class fourlbion:
     def changeServerVars(self, event):
         global server, loginServer, path
 
-        threading.Thread(target=self.updater, args=(False,)).start()
+        self.updateThread = threading.Thread(target=self.updater, args=(False,))
+        self.updateThread.daemon = True
+        self.updateThread.start()
 
         server = servers[self.serverVar.get()][0]
         loginServer = servers[self.serverVar.get()][1]
