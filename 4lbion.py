@@ -454,15 +454,16 @@ class fourlbion:
     def settingsWindow(self):
         self.settings = Toplevel(self.master)
         self.settings.title("4lbion - Settings")
-        self.settings.minsize(280, 230)
+        self.settings.minsize(170, 160)
         self.settings.resizable(False, False)
         self.settings.lift()
-        # creation of a 280x230 window not resizable
+        # creation of secondary window for settings
 
+        self.line1 = Frame(self.settings)
         self.pathVar = StringVar()
         self.pathVar.set(getJsonData("basePath"))
         self.pathButton = Button(
-            self.settings,
+            self.line1,
             command=lambda: self.pathVar.set(
                 filedialog.askdirectory(initialdir=getJsonData("basePath"))
             ),
@@ -471,47 +472,53 @@ class fourlbion:
         self.pathButton.config(height=1, width=30)
         # path entry and label
 
-        self.resLabel = Label(self.settings, text="Game Resolution")
+        self.line2 = Frame(self.settings)
+        self.resLabel = Label(self.line2, text="Game Resolution")
 
         self.resVar = StringVar()
         self.resVar.set(getJsonData("resolution"))
-        self.resMenu = OptionMenu(self.settings, self.resVar, *screenRes)
+        self.resMenu = OptionMenu(self.line2, self.resVar, *screenRes)
         self.resMenu.config(height=1, width=12)
         # resolution menu and label
 
-        self.langLabel = Label(self.settings, text="Game Language")
+        self.line3 = Frame(self.settings)
+        self.langLabel = Label(self.line3, text="Game Language")
 
         self.langVar = StringVar()
         self.langVar.set(getJsonData("language"))
-        self.langMenu = OptionMenu(self.settings, self.langVar, *languagesArray)
+        self.langMenu = OptionMenu(self.line3, self.langVar, *languagesArray)
         self.langMenu.config(height=1, width=12)
         # language menu and label
 
-        self.steamLabel = Label(self.settings, text="use SteamAPI ?")
+        self.line4 = Frame(self.settings)
+        self.steamLabel = Label(self.line4, text="use SteamAPI ?")
 
         self.steamVar = BooleanVar()
         self.steamVar.set(getJsonData("steam"))
-        self.steamCheck = Checkbutton(self.settings, variable=self.steamVar)
+        self.steamCheck = Checkbutton(self.line4, variable=self.steamVar)
         # SteamAPI checkbutton and label
 
-        self.fullscreenLabel = Label(self.settings, text="Fullscreen")
+        self.line5 = Frame(self.settings)
+        self.fullscreenLabel = Label(self.line5, text="Fullscreen")
 
         self.fullscreenVar = BooleanVar()
         self.fullscreenVar.set(getJsonData("fullscreen"))
-        self.fullscreenCheck = Checkbutton(self.settings, variable=self.fullscreenVar)
+        self.fullscreenCheck = Checkbutton(self.line5, variable=self.fullscreenVar)
         # fullscreen checkbutton and label
 
+        self.line6 = Frame(self.settings)
         self.updateThread = threading.Thread(target=self.updater, args=(True,))
         self.updateThread.daemon = True
         self.updateButton = Button(
-            self.settings,
+            self.line6,
             text="Force checking for update",
             command=lambda: self.updateThread.start(),
         )
         self.updateButton.config(height=1, width=30)
 
+        self.line7 = Frame(self.settings)
         self.applyButton = Button(
-            self.settings,
+            self.line7,
             text="Apply",
             command=lambda: editJsonData(
                 self.pathVar.get(),
@@ -524,23 +531,30 @@ class fourlbion:
             width=8,
         )
 
-        self.pathButton.place(x=5, y=5)
+        self.line1.pack(side=constants.TOP, fill=constants.X)
+        self.pathButton.pack(side=constants.TOP, fill=constants.X)
 
-        self.resLabel.place(x=5, y=47)
-        self.resMenu.place(x=125, y=40)
+        self.line2.pack(side=constants.TOP, fill=constants.X)
+        self.resLabel.pack(side=constants.LEFT)
+        self.resMenu.pack(side=constants.RIGHT)
 
-        self.langLabel.place(x=5, y=82)
-        self.langMenu.place(x=125, y=75)
+        self.line3.pack(side=constants.TOP, fill=constants.X)
+        self.langLabel.pack(side=constants.LEFT)
+        self.langMenu.pack(side=constants.RIGHT)
 
-        self.steamLabel.place(x=5, y=110)
-        self.steamCheck.place(x=125, y=110)
+        self.line4.pack(side=constants.TOP, fill=constants.X)
+        self.steamLabel.pack(side=constants.LEFT)
+        self.steamCheck.pack(side=constants.RIGHT)
 
-        self.fullscreenLabel.place(x=5, y=130)
-        self.fullscreenCheck.place(x=125, y=130)
+        self.line5.pack(side=constants.TOP, fill=constants.X)
+        self.fullscreenLabel.pack(side=constants.LEFT)
+        self.fullscreenCheck.pack(side=constants.RIGHT)
 
-        self.updateButton.place(x=5, y=160)
+        self.line6.pack(side=constants.TOP, fill=constants.X)
+        self.updateButton.pack(side=constants.TOP, fill=constants.X)
 
-        self.applyButton.place(x=100, y=200)
+        self.line7.pack(side=constants.TOP, fill=constants.X)
+        self.applyButton.pack(side=constants.TOP, fill=constants.X)
 
     def updater(self, force):
         self.serverMenu.config(state="disabled")
