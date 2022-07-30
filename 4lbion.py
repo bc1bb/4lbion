@@ -14,6 +14,7 @@ try:
     import threading
     import subprocess
     import stat
+    from datetime import datetime
     from hashlib import md5
     from zipfile import ZipFile
 
@@ -275,6 +276,14 @@ def getLauncherBackground():
 
             os.remove("background.jpeg")
             # we delete the old file because it's useless now
+    else:
+        today = datetime.today()
+        backgroundDlDate = datetime.fromtimestamp(os.path.getmtime('background.gif'))
+        duration = today - backgroundDlDate
+        if duration.days >= 30:
+            os.unlink("background.gif")
+            getLauncherBackground()
+        # If background is older than a month, remove it and rerun function
 
 
 def connectedPlayers():
