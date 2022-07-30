@@ -193,7 +193,13 @@ def getOS():
 
 def getGameVersion():
     try:
-        versionFile = open(path + "/version.txt").read()
+        if getOS() == "macosx":
+            versionFile = open(
+                path + "/Albion-Online.app/Contents/Resources" + "/version.txt"
+            ).read()
+        else:
+            versionFile = open(path + "/version.txt").read()
+
         prefixSize = len("albiononline-" + getOS() + "-full-")
 
         return versionFile[prefixSize:].strip("\n")
@@ -316,6 +322,14 @@ basePath = getJsonData("basePath")
 server = "live.albiononline.com"
 loginServer = "loginserver.live.albion.zone:5055"
 path = basePath + "/game_x64"
+
+if getOS() == "win32":
+    exe = "Albion-Online.exe"
+elif getOS() == "linux":
+    exe = "Albion-Online"
+elif getOS() == "macosx":
+    exe = "Albion-Online.app"
+
 
 servers = {
     "Live": [
@@ -640,6 +654,8 @@ class fourlbion:
                         tempZip.extractall()
                         try:
                             os.replace(tempZip.namelist()[0], filePath)
+                        except NotADirectoryError:
+                            pass
                         except FileNotFoundError:
                             pathToCreate = "./"
                             for folder in filePath.split("/")[:-1]:
@@ -652,9 +668,13 @@ class fourlbion:
 
             self.downloadVar.set("")
             os.chdir(oldPath)
-            os.chmod(
-                path + "/Albion-Online", stat.S_IXUSR
-            )  # add execute by owner permission for the binary file
+            if getOS() == "macosx":
+                os.chmod(
+                    path + "/" + exe + "/Contents/MacOs/Albion Online Client", 0o744
+                )
+            else:
+                os.chmod(path + "/" + exe, stat.S_IXUSR)
+                # add execute by owner permission for the binary file
 
         self.gameVersionVar.set(
             "Game version: " + getGameVersion() + " (" + getOS() + ")"
@@ -691,13 +711,22 @@ class fourlbion:
         else:
             windowMode = "+windowed"
 
-        if os.path.exists(path + "/Albion-Online"):
+        if os.path.exists(path + "/" + exe):
             oldWorkingDir = os.getcwd()
             os.chdir(path)
+            prefix = ""
+            arg = " "
+            if getOS() == "macosx":
+                prefix = "open "
+                arg = " --args "
             subprocess.call(
-                '"'
+                prefix
+                + '"'
                 + path
-                + '/Albion-Online" '
+                + "/"
+                + exe
+                + '"'
+                + arg
                 + windowMode
                 + " -screen-width "
                 + width
@@ -716,7 +745,9 @@ class fourlbion:
                 "4lbion - Error",
                 "Game path is invalid\n(Unable to find "
                 + path
-                + "/Albion-Online on your disk)",
+                + "/"
+                + exe
+                + " on your disk)",
             )
 
 

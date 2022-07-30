@@ -27,6 +27,7 @@ This file is pretty big (1.8Go at time of writing), so it is normal for it to ta
 - Manjaro 19 -> 21
 - Windows 10 -> 11
 - Debian 11
+- MacOS 12.5 **(needs Python 3.10)**
 
 ## Configuration
 Everything happens in `4lbion.json` in the working directory.
