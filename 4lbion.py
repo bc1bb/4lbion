@@ -37,6 +37,17 @@ except ImportError:
     print("Unable to import Tkinter, is it installed ? Are you running Py3.x ?")
     sys.exit(1)
 
+try:
+    if platform.system() == "Darwin":
+        import PyTouchBar
+        touch_bar = True
+        # Nice useless feature :)
+    else:
+        touch_bar = False
+except ImportError:
+    touch_bar = False
+    pass
+
 screen_res = [
     "3620x2036",
     "3440x1440",
@@ -495,6 +506,17 @@ class fourAlbion:
         self.update_thread.start()
         # now update the game
 
+        if touch_bar:
+            play_button = PyTouchBar.TouchBarItems.Button(title="Play !", action=self.tb_play)
+            settings_button = PyTouchBar.TouchBarItems.Button(title="⚙️", action=self.settings_window)
+
+            PyTouchBar.set_touchbar([play_button, settings_button])
+
+    def tb_play(self, event):
+        # this function only exists to make sure that we are supposed to start the game when pressing on Mac Touch Bar
+        if self.play_button['state'] == tkinter.NORMAL:
+            start_game()
+
     def settings_window(self):
         settings = tkinter.Toplevel(self.master)
         settings.title("4lbion - Settings")
@@ -730,6 +752,8 @@ if __name__ == "__main__":
     try:
         root = tkinter.Tk()
         window = fourAlbion(root)
+        if touch_bar:
+            PyTouchBar.prepare_tk_windows([root])
         root.mainloop()
     except KeyboardInterrupt:
         sys.exit(0)

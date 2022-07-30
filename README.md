@@ -20,6 +20,8 @@ python3 4lbion.py
 ```
 You can take [4lbion.desktop](4lbion.desktop) as a good example of a desktop launcher for 4lbion.
 
+(Also, there is a nice feature if you install `PyTouchBar`)
+
 #### `Albion-Online_Data/resources.assets.resS` takes a while to download/check, why ?
 This file is pretty big (1.8Go at time of writing), so it is normal for it to take a while.
 
