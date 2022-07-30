@@ -40,6 +40,7 @@ except ImportError:
 try:
     if platform.system() == "Darwin":
         import PyTouchBar
+
         touch_bar = True
         # Nice useless feature :)
     else:
@@ -135,7 +136,9 @@ def init_json_data_file():
                 }
                 json.dump(default_settings, f)
         except IOError:
-            tkinter.messagebox.showerror("4lbion - Error", "Unable to create 4lbion.json")
+            tkinter.messagebox.showerror(
+                "4lbion - Error", "Unable to create 4lbion.json"
+            )
 
 
 def get_json_data(name):
@@ -146,7 +149,9 @@ def get_json_data(name):
             if name in settings:
                 return settings[name]
             else:
-                tkinter.messagebox.showwarning("4lbion - Internal Error", "Internal error")
+                tkinter.messagebox.showwarning(
+                    "4lbion - Internal Error", "Internal error"
+                )
     else:
         init_json_data_file()
         return get_json_data(name)
@@ -157,9 +162,13 @@ def edit_json_data(resolution, language, steam, fullscreen):
     if os.path.exists(launcher_path + "/4lbion.json"):
         try:
             if not resolution == get_json_data("resolution"):
-                tkinter.messagebox.showwarning("4lbion - Warning", "Please restart 4lbion")
+                tkinter.messagebox.showwarning(
+                    "4lbion - Warning", "Please restart 4lbion"
+                )
             elif not base_path == get_json_data("basePath"):
-                tkinter.messagebox.showwarning("4lbion - Warning", "Please restart 4lbion")
+                tkinter.messagebox.showwarning(
+                    "4lbion - Warning", "Please restart 4lbion"
+                )
 
             with open(launcher_path + "/4lbion.json", "w") as settingsFile:
                 settings = {
@@ -197,7 +206,9 @@ def get_os():
 def get_game_version():
     try:
         if get_os() == "macosx":
-            game_version = open(path + "/Albion-Online.app/Contents/Resources" + "/version.txt").read()
+            game_version = open(
+                path + "/Albion-Online.app/Contents/Resources" + "/version.txt"
+            ).read()
         else:
             game_version = open(path + "/version.txt").read()
 
@@ -267,7 +278,9 @@ def get_launcher_background():
                 try:
                     r = requests.get(url, headers=curl_headers)
                 except requests.exceptions:
-                    tkinter.messagebox.showerror("4lbion - Error", "Unable to download " + url)
+                    tkinter.messagebox.showerror(
+                        "4lbion - Error", "Unable to download " + url
+                    )
                     sys.exit(1)
                 f.write(r.content)
 
@@ -281,7 +294,9 @@ def get_launcher_background():
             # we delete the old file because it's useless now
     else:
         today = datetime.datetime.today()
-        background_dl_date = datetime.datetime.fromtimestamp(os.path.getmtime('background.gif'))
+        background_dl_date = datetime.datetime.fromtimestamp(
+            os.path.getmtime("background.gif")
+        )
         duration = today - background_dl_date
         if duration.days >= 30:
             os.unlink("background.gif")
@@ -411,37 +426,50 @@ class fourAlbion:
 
         bg_label = tkinter.Label(self.master)
         try:
-            bg = tkinter.PhotoImage(file="background.gif")  # Tkinter forces us to use GIF
+            bg = tkinter.PhotoImage(
+                file="background.gif"
+            )  # Tkinter forces us to use GIF
             bg_label = tkinter.Label(self.master, image=bg)
             bg_label.photo = bg
             background_set = True
             # here we scrap the background of the official launcher and use it for our background
         except tkinter.TclError:
             background_set = False
-            tkinter.messagebox.showwarning("4lbion - Warning", "Unable to load background.gif")
+            tkinter.messagebox.showwarning(
+                "4lbion - Warning", "Unable to load background.gif"
+            )
 
         self.top_bar = tkinter.Frame(self.master)
 
         self.connected_var = tkinter.StringVar()
         self.connected_var.set(connected_players() + " players online (Steam)")
-        self.connected_label = tkinter.Label(self.top_bar, textvariable=self.connected_var)
+        self.connected_label = tkinter.Label(
+            self.top_bar, textvariable=self.connected_var
+        )
 
         self.game_version_var = tkinter.StringVar()
         self.game_version_var.set(
             "Game version: " + get_game_version() + " (" + get_os() + ")"
         )
-        self.game_version_label = tkinter.Label(self.top_bar, textvariable=self.game_version_var)
+        self.game_version_label = tkinter.Label(
+            self.top_bar, textvariable=self.game_version_var
+        )
 
         self.bot_frame = tkinter.Frame(self.master)
 
         self.dw_frame = tkinter.Frame(self.bot_frame)
         self.dw_frame_l1 = tkinter.Frame(self.dw_frame)
         self.download_var = tkinter.StringVar()
-        self.download_label = tkinter.Label(self.dw_frame_l1, textvariable=self.download_var)
+        self.download_label = tkinter.Label(
+            self.dw_frame_l1, textvariable=self.download_var
+        )
 
         self.dw_frame_line2 = tkinter.Frame(self.dw_frame)
         self.download_progress = tkinter.ttk.Progressbar(
-            self.dw_frame_line2, orient=tkinter.HORIZONTAL, length=500, mode="determinate"
+            self.dw_frame_line2,
+            orient=tkinter.HORIZONTAL,
+            length=500,
+            mode="determinate",
         )
         # to update it: self.downloadProgress['value'] = x (in percentage)
 
@@ -471,7 +499,11 @@ class fourAlbion:
         # put game in a none daemon thread so that we can close the launcher while albion is running
 
         self.settings_button = tkinter.Button(
-            self.server_frame_line2, text="⚙", command=self.settings_window, height=2, width=2
+            self.server_frame_line2,
+            text="⚙",
+            command=self.settings_window,
+            height=2,
+            width=2,
         )
         # btn to start the settings window
 
@@ -507,14 +539,18 @@ class fourAlbion:
         # now update the game
 
         if touch_bar:
-            play_button = PyTouchBar.TouchBarItems.Button(title="Play !", action=self.tb_play)
-            settings_button = PyTouchBar.TouchBarItems.Button(title="⚙️", action=self.settings_window)
+            play_button = PyTouchBar.TouchBarItems.Button(
+                title="Play !", action=self.tb_play
+            )
+            settings_button = PyTouchBar.TouchBarItems.Button(
+                title="⚙️", action=self.settings_window
+            )
 
             PyTouchBar.set_touchbar([play_button, settings_button])
 
     def tb_play(self, event):
         # this function only exists to make sure that we are supposed to start the game when pressing on Mac Touch Bar
-        if self.play_button['state'] == tkinter.NORMAL:
+        if self.play_button["state"] == tkinter.NORMAL:
             start_game()
 
     def settings_window(self):
@@ -586,7 +622,9 @@ class fourAlbion:
         apply_button = tkinter.Button(
             line7,
             text="Apply",
-            command=lambda: edit_json_data(res_var.get(), lang_var.get(), steam_var.get(), fullscreen_var.get()),
+            command=lambda: edit_json_data(
+                res_var.get(), lang_var.get(), steam_var.get(), fullscreen_var.get()
+            ),
             height=1,
             width=8,
         )
@@ -677,7 +715,8 @@ class fourAlbion:
 
                 if (
                     not os.path.exists(file_path)
-                    or not hashlib.md5(open(file_path, "rb").read()).hexdigest() == file_md5
+                    or not hashlib.md5(open(file_path, "rb").read()).hexdigest()
+                    == file_md5
                 ):
                     self.download_var.set("Downloading " + file_path + "...")
                     file_to_download_url = (
