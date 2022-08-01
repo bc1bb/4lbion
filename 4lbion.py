@@ -553,7 +553,7 @@ class fourAlbion:
         if self.play_button["state"] == tkinter.NORMAL:
             start_game()
 
-    def settings_window(self):
+    def settings_window(self, tb=False):
         settings = tkinter.Toplevel(self.master)
         settings.title("4lbion - Settings")
         settings.minsize(170, 160)
