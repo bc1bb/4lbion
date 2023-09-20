@@ -461,7 +461,7 @@ class fourAlbion:
         self.dw_frame_l1 = tkinter.Frame(self.dw_frame)
         self.download_var = tkinter.StringVar()
         self.download_label = tkinter.Label(
-            self.dw_frame_l1, textvariable=self.download_var
+            self.dw_frame_l1, textvariable=self.download_var, width=50
         )
 
         self.dw_frame_line2 = tkinter.Frame(self.dw_frame)
